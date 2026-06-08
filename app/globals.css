@@ -493,3 +493,26 @@ img { max-width: 100%; }
     cursor: auto !important;
   }
 }
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.mobile-safe {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.text-mobile-clamp {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
