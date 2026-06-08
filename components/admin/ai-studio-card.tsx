@@ -14,7 +14,7 @@ const OPTIONS = [
 
 export function AiStudioCard({ profile, content }: { profile: Profile; content: SiteContent }) {
   const [kind, setKind] = useState<(typeof OPTIONS)[number]['value']>('creative_direction');
-  const [prompt, setPrompt] = useState('Buat versi premium, clean, dan cocok untuk portfolio neobrutalism Hafiz Al Fariz.');
+  const [prompt, setPrompt] = useState('Buat versi premium, clean, dan cocok untuk portfolio contemporary Hafiz Al Fariz.');
   const [result, setResult] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
   const [message, setMessage] = useState('Area generate tambahan untuk copy dan ide baru.');
@@ -59,21 +59,17 @@ export function AiStudioCard({ profile, content }: { profile: Profile; content: 
   };
 
   return (
-    <section className="space-y-5 rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-      <div className="space-y-1">
-        <p className="section-label">KOGRAPH | AI Studio</p>
-        <h3 className="text-2xl tracking-tighter text-white">Generate lainnya untuk card paling bawah</h3>
-        <p className="max-w-3xl text-sm leading-7 text-white/[0.56]">
-          Dipakai untuk ide copy tambahan seperti hero headline, CTA, focus items, caption showcase, sampai creative direction untuk section baru.
+    <section className="admin-card space-y-5 p-5 sm:p-6">
+      <div className="space-y-2">
+        <p className="section-label"><Sparkles className="h-3.5 w-3.5" /> AI Studio</p>
+        <h3 className="text-2xl font-black tracking-[-0.05em] text-[var(--text)] md:text-3xl">Generate ide copy tambahan</h3>
+        <p className="max-w-3xl text-sm font-medium leading-7 text-[var(--muted)]">
+          Dipakai untuk hero headline, CTA, focus items, caption showcase, sampai creative direction untuk section baru.
         </p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-        <select
-          value={kind}
-          onChange={(event) => setKind(event.target.value as (typeof OPTIONS)[number]['value'])}
-          className="input-shell"
-        >
+        <select value={kind} onChange={(event) => setKind(event.target.value as (typeof OPTIONS)[number]['value'])} className="input-shell">
           {OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -81,46 +77,28 @@ export function AiStudioCard({ profile, content }: { profile: Profile; content: 
           ))}
         </select>
 
-        <textarea
-          value={prompt}
-          onChange={(event) => setPrompt(event.target.value)}
-          className="input-shell min-h-[120px]"
-          placeholder="Jelaskan apa yang ingin dihasilkan AI..."
-        />
+        <textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} className="input-shell min-h-[120px]" placeholder="Jelaskan apa yang ingin dihasilkan AI..." />
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={generate}
-          className="inline-flex items-center gap-2 rounded-full border border-white bg-white px-5 py-3 text-sm font-medium text-black transition hover:opacity-85"
-        >
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <button type="button" onClick={generate} className="btn-primary px-5 py-3 text-sm">
           {status === 'loading' ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
           Generate Output
         </button>
 
-        <button
-          type="button"
-          onClick={copyResult}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm text-white/75 transition hover:border-white/25 hover:text-white"
-        >
+        <button type="button" onClick={copyResult} className="btn-secondary px-5 py-3 text-sm">
           <Copy className="h-4 w-4" />
           Copy Result
         </button>
       </div>
 
-      <div className="rounded-[1.6rem] border border-white/10 bg-black/50 p-5">
-        <div className="mb-3 flex items-center gap-2 text-white/82">
-          {status === 'done' ? <CheckCircle2 className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
-          <p className="text-sm">{message}</p>
+      <div className="form-subpanel space-y-4">
+        <div className="flex items-center gap-2 text-[var(--text)]">
+          {status === 'done' ? <CheckCircle2 className="h-4 w-4 text-[var(--success)]" /> : <Sparkles className="h-4 w-4 text-[var(--primary)]" />}
+          <p className="text-sm font-semibold">{message}</p>
         </div>
 
-        <textarea
-          value={result}
-          readOnly
-          className="input-shell min-h-[220px] resize-none bg-white/[0.02]"
-          placeholder="Hasil generate akan muncul di sini..."
-        />
+        <textarea value={result} readOnly className="input-shell min-h-[220px] resize-none" placeholder="Hasil generate akan muncul di sini..." />
       </div>
     </section>
   );

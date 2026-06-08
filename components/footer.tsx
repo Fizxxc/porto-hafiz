@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 import type { Profile } from '@/types';
 
 export function Footer({ profile }: { profile: Profile }) {
@@ -10,32 +11,29 @@ export function Footer({ profile }: { profile: Profile }) {
   ].filter((item) => Boolean(item.href));
 
   return (
-    <footer className="border-t-[3px] border-[#111] bg-[#fffdf2] px-6 py-16 md:px-10">
-      <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:items-end">
-        <div className="space-y-4">
-          <p className="section-label bg-[#7df9ff]">Support Mail</p>
-          <a className="text-2xl font-black tracking-tight text-[#111] transition hover:opacity-70" href="mailto:hafizalfariz.support@gmail.com">
-            hafizalfariz.support@gmail.com
-          </a>
-          <p className="max-w-xl text-sm font-semibold leading-7 text-[#111]/70">
-            Portfolio ini dibangun untuk presentasi karya, identitas personal, akses cepat ke project asset, dan UX neobrutalism yang jelas.
-          </p>
-        </div>
+    <footer className="section-shell pb-10 pt-4">
+      <div className="surface-panel p-6 md:p-8">
+        <div className="grid gap-8 md:grid-cols-2 md:items-end">
+          <div>
+            <p className="section-label">Support Mail</p>
+            <a className="mt-5 block break-words text-4xl font-black uppercase leading-[0.9] tracking-[-0.055em] text-[var(--text)] transition hover:text-[var(--primary)] md:text-6xl" href={`mailto:${profile.email || 'hafizalfariz.support@gmail.com'}`}>
+              {profile.email || 'hafizalfariz.support@gmail.com'}
+            </a>
+            <p className="mt-4 max-w-xl text-sm font-bold leading-7 text-[var(--muted)]">
+              Portfolio Hafiz Al Fariz dengan gaya brutalism, hard-edge cards, loading React Three Fiber, dan dashboard admin responsive.
+            </p>
+          </div>
 
-        <div className="space-y-4 md:justify-self-end">
-          <p className="section-label bg-[#ffb000]">Find Me On</p>
-          <div className="flex flex-wrap gap-3">
-            {socials.map((social) => (
-              <Link
-                key={social.label}
-                href={social.href!}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border-[3px] border-[#111] bg-[#d7ff31] px-4 py-2 text-sm font-black text-[#111] shadow-[4px_4px_0_#111] transition hover:-translate-y-0.5"
-              >
-                {social.label}
-              </Link>
-            ))}
+          <div className="space-y-4 md:justify-self-end">
+            <p className="section-label">Find Me On</p>
+            <div className="flex flex-wrap gap-3 md:justify-end">
+              {socials.map((social) => (
+                <Link key={social.label} href={social.href!} target="_blank" rel="noreferrer" className="btn-secondary px-4 py-2 text-xs">
+                  {social.label}
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ create table if not exists public.profiles (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   full_name text not null default 'Hafiz Al Fariz',
-  headline text not null default 'Neobrutalist UI/UX Designer & Creative Student',
+  headline text not null default 'Contemporary UI/UX Designer & Creative Student',
   school_info text not null default '',
   bio text not null default '',
   phone text not null default '',
@@ -23,18 +23,18 @@ create table if not exists public.profiles (
 create table if not exists public.site_content (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
-  hero_badge text not null default 'Neobrutal Portfolio / UI UX',
-  hero_title text not null default 'Hafiz Al Fariz builds bold visual systems with neobrutalist energy and clear UX flow.',
-  hero_subtitle text not null default 'A tactile portfolio experience with thick borders, loud contrast, clear sections, and fast access to protected project assets.',
+  hero_badge text not null default 'Contemporary Portfolio / UI UX',
+  hero_title text not null default 'Hafiz Al Fariz builds clean visual systems with contemporary bento layouts and clear UX flow.',
+  hero_subtitle text not null default 'A modern portfolio experience with minimalist sections, expressive typography, bento grids, dark mode support, and fast access to protected project assets.',
   about_title text not null default 'About Me',
-  about_body text not null default 'I focus on building UI/UX presentations that feel bold, useful, and easy to scan. Every section uses clear hierarchy, strong contrast, and tactile visual blocks so viewers can understand the work quickly.',
-  about_highlights jsonb not null default '["Neobrutal UI/UX", "Brand Identity", "Poster & Editorial"]'::jsonb,
+  about_body text not null default 'I focus on building UI/UX presentations that feel clean, useful, and easy to scan. Every section uses clear hierarchy, modern bento blocks, strong typography, and fast responsive flows so viewers can understand the work quickly.',
+  about_highlights jsonb not null default '["Contemporary UI/UX", "Brand Identity", "Poster & Editorial"]'::jsonb,
   focus_title text not null default 'Software I Use',
   focus_items jsonb not null default '["Figma", "Adobe Photoshop", "Adobe Lightroom"]'::jsonb,
   software_stack jsonb not null default '[{"name":"Figma","icon_url":"https://cdn.simpleicons.org/figma/111111"},{"name":"Adobe Photoshop","icon_url":"https://cdn.simpleicons.org/adobephotoshop/111111"},{"name":"Adobe Lightroom","icon_url":"https://cdn.simpleicons.org/adobelightroomclassic/111111"}]'::jsonb,
   portfolio_drive_url text not null default '',
   contact_title text not null default 'Let’s build something bold, useful, and unmistakable.',
-  contact_body text not null default 'Open for student collaborations, personal branding work, neobrutalist UI experiments, and selected digital design projects.'
+  contact_body text not null default 'Open for student collaborations, personal branding work, contemporary UI experiments, and selected digital design projects.'
 );
 
 create table if not exists public.projects (
@@ -85,7 +85,7 @@ create table if not exists public.security_events (
 
 -- 2) SAFE COLUMN UPGRADES FOR OLD DATABASES
 alter table public.profiles
-  add column if not exists headline text not null default 'Neobrutalist UI/UX Designer & Creative Student',
+  add column if not exists headline text not null default 'Contemporary UI/UX Designer & Creative Student',
   add column if not exists school_info text not null default '',
   add column if not exists bio text not null default '',
   add column if not exists phone text not null default '',
@@ -94,18 +94,18 @@ alter table public.profiles
   add column if not exists social_links jsonb not null default '{}'::jsonb;
 
 alter table public.site_content
-  add column if not exists hero_badge text not null default 'Neobrutal Portfolio / UI UX',
-  add column if not exists hero_title text not null default 'Hafiz Al Fariz builds bold visual systems with neobrutalist energy and clear UX flow.',
-  add column if not exists hero_subtitle text not null default 'A tactile portfolio experience with thick borders, loud contrast, clear sections, and fast access to protected project assets.',
+  add column if not exists hero_badge text not null default 'Contemporary Portfolio / UI UX',
+  add column if not exists hero_title text not null default 'Hafiz Al Fariz builds clean visual systems with contemporary bento layouts and clear UX flow.',
+  add column if not exists hero_subtitle text not null default 'A modern portfolio experience with minimalist sections, expressive typography, bento grids, dark mode support, and fast access to protected project assets.',
   add column if not exists about_title text not null default 'About Me',
-  add column if not exists about_body text not null default 'I focus on building UI/UX presentations that feel bold, useful, and easy to scan. Every section uses clear hierarchy, strong contrast, and tactile visual blocks so viewers can understand the work quickly.',
-  add column if not exists about_highlights jsonb not null default '["Neobrutal UI/UX", "Brand Identity", "Poster & Editorial"]'::jsonb,
+  add column if not exists about_body text not null default 'I focus on building UI/UX presentations that feel clean, useful, and easy to scan. Every section uses clear hierarchy, modern bento blocks, strong typography, and fast responsive flows so viewers can understand the work quickly.',
+  add column if not exists about_highlights jsonb not null default '["Contemporary UI/UX", "Brand Identity", "Poster & Editorial"]'::jsonb,
   add column if not exists focus_title text not null default 'Software I Use',
   add column if not exists focus_items jsonb not null default '["Figma", "Adobe Photoshop", "Adobe Lightroom"]'::jsonb,
   add column if not exists software_stack jsonb not null default '[{"name":"Figma","icon_url":"https://cdn.simpleicons.org/figma/111111"}]'::jsonb,
   add column if not exists portfolio_drive_url text not null default '',
   add column if not exists contact_title text not null default 'Let’s build something bold, useful, and unmistakable.',
-  add column if not exists contact_body text not null default 'Open for student collaborations, personal branding work, neobrutalist UI experiments, and selected digital design projects.';
+  add column if not exists contact_body text not null default 'Open for student collaborations, personal branding work, contemporary UI experiments, and selected digital design projects.';
 
 alter table public.projects
   add column if not exists title text not null default 'Untitled Project',
@@ -160,13 +160,33 @@ create or replace function public.is_admin()
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
-  select exists (
-    select 1
-    from public.admin_users au
-    where au.user_id = auth.uid()
-  );
+  select
+    lower(coalesce(auth.jwt() ->> 'email', '')) in ('kographh@gmail.com')
+    or exists (
+      select 1
+      from public.admin_users au
+      where au.user_id = auth.uid()
+    );
 $$;
+
+grant execute on function public.is_admin() to authenticated;
+grant execute on function public.is_admin() to anon;
+
+-- Default admin email. Make sure this user exists in Supabase Auth > Users.
+insert into public.admin_users (user_id)
+select id
+from auth.users
+where lower(email) = 'kographh@gmail.com'
+on conflict (user_id) do nothing;
+
+-- Backup admin by known Supabase auth user id.
+insert into public.admin_users (user_id)
+values ('5945e93f-cb5a-498d-93d9-dbe9ab9d5ede')
+on conflict (user_id) do nothing;
+
 
 -- 4) RLS
 alter table public.profiles enable row level security;
@@ -198,6 +218,9 @@ drop policy if exists "Admins manage project assets" on public.project_assets;
 drop policy if exists "Only admins read admin_users" on public.admin_users;
 drop policy if exists "admins read admin users" on public.admin_users;
 drop policy if exists "Only admins manage admin_users" on public.admin_users;
+drop policy if exists "Admin users can read own row" on public.admin_users;
+drop policy if exists "Admins can manage admin_users" on public.admin_users;
+drop policy if exists "Allow admin user to read own admin row" on public.admin_users;
 
 drop policy if exists "admins manage security events" on public.security_events;
 drop policy if exists "service insert security events" on public.security_events;
@@ -212,8 +235,8 @@ create policy "Admins manage site content" on public.site_content for all to aut
 create policy "Admins manage projects" on public.projects for all to authenticated using (public.is_admin()) with check (public.is_admin());
 create policy "Admins manage project assets" on public.project_assets for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
-create policy "Only admins read admin_users" on public.admin_users for select to authenticated using (public.is_admin());
-create policy "Only admins manage admin_users" on public.admin_users for all to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "Admin users can read own row" on public.admin_users for select to authenticated using (user_id = auth.uid());
+create policy "Admins can manage admin_users" on public.admin_users for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
 create policy "Admins read security events" on public.security_events for select to authenticated using (public.is_admin());
 create policy "Service insert security events" on public.security_events for insert to public with check (true);
@@ -258,9 +281,9 @@ with check (bucket_id = 'project-assets' and public.is_admin());
 insert into public.profiles (full_name, headline, school_info, bio, phone, email, address, social_links)
 select
   'Hafiz Al Fariz',
-  'Neobrutalist UI/UX Designer & Creative Student',
+  'Contemporary UI/UX Designer & Creative Student',
   'DKV Student · Metland School',
-  'I build bold neobrutalist visuals, identity systems, and portfolio-grade digital experiences with strong contrast, tactile hierarchy, and clear UX flow.',
+  'I build clean contemporary visuals, identity systems, and portfolio-grade digital experiences with expressive typography, bento hierarchy, and clear UX flow.',
   '+62 812 3456 7890',
   'hafizalfariz.support@gmail.com',
   'Bekasi, Indonesia',
@@ -275,7 +298,7 @@ where not exists (select 1 from public.profiles);
 update public.profiles
 set
   full_name = 'Hafiz Al Fariz',
-  headline = case when headline = '' or headline ilike '%Visual Designer%' then 'Neobrutalist UI/UX Designer & Creative Student' else headline end,
+  headline = case when headline = '' or headline ilike '%Visual Designer%' then 'Contemporary UI/UX Designer & Creative Student' else headline end,
   email = case when email = '' or email <> 'hafizalfariz.support@gmail.com' then 'hafizalfariz.support@gmail.com' else email end,
   social_links = coalesce(nullif(social_links, '{}'::jsonb), jsonb_build_object(
     'ig', 'https://instagram.com/hafizalfariz',
@@ -300,26 +323,26 @@ insert into public.site_content (
   contact_body
 )
 select
-  'Neobrutal Portfolio / UI UX',
-  'Hafiz Al Fariz builds bold visual systems with neobrutalist energy and clear UX flow.',
-  'A tactile portfolio experience with thick borders, loud contrast, clear sections, and fast access to protected project assets.',
+  'Contemporary Portfolio / UI UX',
+  'Hafiz Al Fariz builds clean visual systems with contemporary bento layouts and clear UX flow.',
+  'A modern portfolio experience with minimalist sections, expressive typography, bento grids, dark mode support, and fast access to protected project assets.',
   'About Me',
-  'I focus on building UI/UX presentations that feel bold, useful, and easy to scan. Every section uses clear hierarchy, strong contrast, and tactile visual blocks so viewers can understand the work quickly.',
-  '["Neobrutal UI/UX","Brand Identity","Poster & Editorial"]'::jsonb,
+  'I focus on building UI/UX presentations that feel clean, useful, and easy to scan. Every section uses clear hierarchy, modern bento blocks, strong typography, and fast responsive flows so viewers can understand the work quickly.',
+  '["Contemporary UI/UX","Brand Identity","Poster & Editorial"]'::jsonb,
   'Software I Use',
   '["Figma","Adobe Photoshop","Adobe Lightroom"]'::jsonb,
   '[{"name":"Figma","icon_url":"https://cdn.simpleicons.org/figma/111111"},{"name":"Adobe Photoshop","icon_url":"https://cdn.simpleicons.org/adobephotoshop/111111"},{"name":"Adobe Lightroom","icon_url":"https://cdn.simpleicons.org/adobelightroomclassic/111111"}]'::jsonb,
   'https://example.com/portfolio-drive',
   'Let’s build something bold, useful, and unmistakable.',
-  'Open for student collaborations, personal branding work, neobrutalist UI experiments, and selected digital design projects.'
+  'Open for student collaborations, personal branding work, contemporary UI experiments, and selected digital design projects.'
 where not exists (select 1 from public.site_content);
 
 update public.site_content
 set
-  hero_badge = 'Neobrutal Portfolio / UI UX',
-  hero_title = 'Hafiz Al Fariz builds bold visual systems with neobrutalist energy and clear UX flow.',
-  hero_subtitle = 'A tactile portfolio experience with thick borders, loud contrast, clear sections, and fast access to protected project assets.',
-  about_highlights = '["Neobrutal UI/UX","Brand Identity","Poster & Editorial"]'::jsonb,
+  hero_badge = 'Contemporary Portfolio / UI UX',
+  hero_title = 'Hafiz Al Fariz builds clean visual systems with contemporary bento layouts and clear UX flow.',
+  hero_subtitle = 'A modern portfolio experience with minimalist sections, expressive typography, bento grids, dark mode support, and fast access to protected project assets.',
+  about_highlights = '["Contemporary UI/UX","Brand Identity","Poster & Editorial"]'::jsonb,
   contact_title = 'Let’s build something bold, useful, and unmistakable.',
-  contact_body = 'Open for student collaborations, personal branding work, neobrutalist UI experiments, and selected digital design projects.'
+  contact_body = 'Open for student collaborations, personal branding work, contemporary UI experiments, and selected digital design projects.'
 where id in (select id from public.site_content order by created_at asc limit 1);

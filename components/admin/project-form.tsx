@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, RefreshCcw, Trash2 } from 'lucide-react';
+import { Plus, RefreshCcw, Save, Trash2 } from 'lucide-react';
 import { type FormEvent, useMemo, useState } from 'react';
 import { AiPromptAssist } from '@/components/admin/ai-prompt-assist';
 import { createClient } from '@/lib/supabase/browser';
@@ -125,13 +125,20 @@ export function ProjectForm({ projects }: Props) {
   };
 
   return (
-    <form onSubmit={save} className="space-y-5 rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-      <div className="space-y-1">
-        <p className="section-label">Project Manager</p>
-        <h3 className="text-2xl tracking-tighter text-white">Create & Edit Projects</h3>
+    <form onSubmit={save} className="admin-card space-y-5 p-5 sm:p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-2">
+          <p className="section-label">Project Manager</p>
+          <h3 className="text-2xl font-black tracking-[-0.05em] text-[var(--text)] md:text-3xl">Create & Edit Projects</h3>
+          <p className="max-w-2xl text-sm font-medium leading-7 text-[var(--muted)]">Form dibuat nyaman untuk HP: field berurutan, touch target besar, dan section asset dipisah jelas.</p>
+        </div>
+        <label className="inline-flex min-h-11 items-center gap-3 rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-4 py-2 text-sm font-bold text-[var(--text)]">
+          <input type="checkbox" checked={form.featured} onChange={(e) => setForm((p) => ({ ...p, featured: e.target.checked }))} />
+          Featured
+        </label>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-[1fr_auto]">
+      <div className="grid gap-3 md:grid-cols-[1fr_auto]">
         <select
           className="input-shell"
           value={selectedId}
@@ -157,18 +164,26 @@ export function ProjectForm({ projects }: Props) {
             setForm(projectToState());
             setStatus('Reset to new project form.');
           }}
-          className="rounded-full border border-white/10 px-5 py-3 text-sm text-white/76 transition hover:border-white/20 hover:text-white"
+          className="btn-secondary px-5 py-3 text-sm"
         >
-          <RefreshCcw className="mr-2 inline h-4 w-4" />Reset
+          <RefreshCcw className="h-4 w-4" />Reset
         </button>
       </div>
 
-      <input className="input-shell" placeholder="Project title" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value, slug: slugify(e.target.value || p.slug) }))} required />
-      <input className="input-shell" placeholder="Slug" value={form.slug} onChange={(e) => setForm((p) => ({ ...p, slug: slugify(e.target.value) }))} required />
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="block space-y-2 md:col-span-2">
+          <span className="field-label">Project title</span>
+          <input className="input-shell" placeholder="Project title" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value, slug: slugify(e.target.value || p.slug) }))} required />
+        </label>
+        <label className="block space-y-2 md:col-span-2">
+          <span className="field-label">Slug</span>
+          <input className="input-shell" placeholder="Slug" value={form.slug} onChange={(e) => setForm((p) => ({ ...p, slug: slugify(e.target.value) }))} required />
+        </label>
+      </div>
 
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-white/72">Short summary</p>
+          <p className="field-label">Short summary</p>
           <AiPromptAssist kind="project_summary" label="Summary" context={{ title: form.title, category: form.category, year: form.year, client_name: form.client_name }} onApply={(value) => setForm((p) => ({ ...p, summary: value }))} />
         </div>
         <input className="input-shell" placeholder="Short summary" value={form.summary} onChange={(e) => setForm((p) => ({ ...p, summary: e.target.value }))} required />
@@ -176,57 +191,50 @@ export function ProjectForm({ projects }: Props) {
 
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-white/72">Project description</p>
+          <p className="field-label">Project description</p>
           <AiPromptAssist kind="project_description" label="Description" context={{ title: form.title, category: form.category, year: form.year, client_name: form.client_name, summary: form.summary }} onApply={(value) => setForm((p) => ({ ...p, description: value }))} />
         </div>
         <textarea className="input-shell min-h-[180px]" placeholder="Project description" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} required />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <input className="input-shell" placeholder="Category" value={form.category} onChange={(e) => setForm((p) => ({ ...p, category: e.target.value }))} required />
         <input className="input-shell" placeholder="Year" value={form.year} onChange={(e) => setForm((p) => ({ ...p, year: e.target.value }))} required />
         <input className="input-shell" placeholder="Client / Project type" value={form.client_name} onChange={(e) => setForm((p) => ({ ...p, client_name: e.target.value }))} required />
       </div>
 
-      <label className="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm text-white/75">
-        <input type="checkbox" checked={form.featured} onChange={(e) => setForm((p) => ({ ...p, featured: e.target.checked }))} />
-        Featured project
-      </label>
-
-      <div className="rounded-[1.6rem] border border-white/10 bg-black/20 p-5">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div>
-            <p className="section-label">Primary Assets</p>
-            <p className="mt-2 text-sm text-white/55">Tambahin gambar yang mau kamu tampilin di web ya. minimal max upload 50MB (disarankan untuk kompres gambar terlebih dahulu supaya cepat di buka di web).</p>
-          </div>
+      <div className="form-subpanel space-y-4">
+        <div>
+          <p className="section-label">Primary Assets</p>
+          <p className="mt-2 text-sm font-medium leading-7 text-[var(--muted)]">Tambahkan gambar yang mau ditampilkan di web. Maksimal upload 50MB, tetap disarankan kompres supaya loading cepat.</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <input className="input-shell" placeholder="Cover label / Image 1 info" value={form.cover_label} onChange={(e) => setForm((p) => ({ ...p, cover_label: e.target.value }))} />
           <input className="input-shell" placeholder="Asset label / Image 2 info" value={form.asset_label} onChange={(e) => setForm((p) => ({ ...p, asset_label: e.target.value }))} />
           <input className="input-shell" placeholder="Existing cover URL (optional)" value={form.cover_url} onChange={(e) => setForm((p) => ({ ...p, cover_url: e.target.value }))} />
           <input className="input-shell" placeholder="Existing asset URL (optional)" value={form.asset_url} onChange={(e) => setForm((p) => ({ ...p, asset_url: e.target.value }))} />
-          <input className="input-shell file:mr-4 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-black" type="file" accept="image/*" onChange={(e) => setForm((p) => ({ ...p, cover: e.target.files?.[0] ?? null }))} />
-          <input className="input-shell file:mr-4 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-black" type="file" onChange={(e) => setForm((p) => ({ ...p, asset: e.target.files?.[0] ?? null }))} />
+          <input className="input-shell file:mr-4 file:rounded-full file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:text-white" type="file" accept="image/*" onChange={(e) => setForm((p) => ({ ...p, cover: e.target.files?.[0] ?? null }))} />
+          <input className="input-shell file:mr-4 file:rounded-full file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:text-white" type="file" onChange={(e) => setForm((p) => ({ ...p, asset: e.target.files?.[0] ?? null }))} />
         </div>
       </div>
 
-      <div className="rounded-[1.6rem] border border-white/10 bg-black/20 p-5">
-        <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="form-subpanel space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="section-label">Additional Gallery Items</p>
-            <p className="mt-2 text-sm text-white/55">Untuk preview internal browser. Masukkan URL asset dan info singkat gambarnya.</p>
+            <p className="section-label">Additional Gallery</p>
+            <p className="mt-2 text-sm font-medium leading-7 text-[var(--muted)]">Untuk preview internal browser. Masukkan URL asset dan info singkat gambarnya.</p>
           </div>
-          <button type="button" onClick={() => setForm((prev) => ({ ...prev, gallery: [...prev.gallery, { url: '', label: '' }] }))} className="rounded-full border border-white/10 px-4 py-2 text-sm text-white/78 transition hover:border-white/20 hover:text-white">
-            <Plus className="mr-2 inline h-4 w-4" />Tambah Item
+          <button type="button" onClick={() => setForm((prev) => ({ ...prev, gallery: [...prev.gallery, { url: '', label: '' }] }))} className="btn-secondary px-4 py-2 text-sm">
+            <Plus className="h-4 w-4" />Tambah Item
           </button>
         </div>
 
         <div className="space-y-3">
           {form.gallery.map((item, index) => (
-            <div key={`gallery-${index}`} className="grid gap-3 rounded-[1.3rem] border border-white/10 bg-white/[0.03] p-4 md:grid-cols-[1fr_1fr_auto]">
+            <div key={`gallery-${index}`} className="grid gap-3 rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-3 md:grid-cols-[1fr_1fr_auto]">
               <input className="input-shell" placeholder={`Gallery URL ${index + 1}`} value={item.url} onChange={(e) => setForm((prev) => ({ ...prev, gallery: prev.gallery.map((current, currentIndex) => currentIndex === index ? { ...current, url: e.target.value } : current) }))} />
               <input className="input-shell" placeholder={`Label ${index + 1}`} value={item.label} onChange={(e) => setForm((prev) => ({ ...prev, gallery: prev.gallery.map((current, currentIndex) => currentIndex === index ? { ...current, label: e.target.value } : current) }))} />
-              <button type="button" onClick={() => setForm((prev) => ({ ...prev, gallery: prev.gallery.filter((_, currentIndex) => currentIndex !== index) }))} className="rounded-2xl border border-white/10 px-4 text-white/70 transition hover:border-white/20 hover:text-white">
+              <button type="button" onClick={() => setForm((prev) => ({ ...prev, gallery: prev.gallery.filter((_, currentIndex) => currentIndex !== index) }))} className="btn-secondary px-4 py-3 text-sm">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -234,11 +242,11 @@ export function ProjectForm({ projects }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" className="rounded-full border border-white bg-white px-5 py-3 text-sm font-medium text-black transition hover:opacity-85">
-          {selectedId === 'new' ? 'Save Project' : 'Update Project'}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button type="submit" className="btn-primary px-5 py-3 text-sm">
+          <Save className="h-4 w-4" /> {selectedId === 'new' ? 'Save Project' : 'Update Project'}
         </button>
-        <p className="text-sm text-white/[0.55]">{status}</p>
+        <p className="status-pill">{status}</p>
       </div>
     </form>
   );

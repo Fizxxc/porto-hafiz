@@ -21,7 +21,7 @@ export function InternalBrowser({ url, label = 'Open Internal Browser' }: Props)
           setOpen(true);
           setMinimized(false);
         }}
-        className="brutal-button bg-[#7df9ff] px-6 py-3 text-sm"
+        className="btn-secondary px-6 py-3 text-sm"
       >
         {label}
       </button>
@@ -32,23 +32,23 @@ export function InternalBrowser({ url, label = 'Open Internal Browser' }: Props)
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 24 }}
-            className={`fixed z-[92] ${minimized ? 'bottom-5 right-5 h-[72px] w-[320px]' : 'inset-4 md:inset-8'}`}
+            className={`fixed z-[92] ${minimized ? 'bottom-4 right-4 h-[76px] w-[min(92vw,340px)]' : 'inset-3 md:inset-8'}`}
           >
-            <div className="flex h-full flex-col overflow-hidden rounded-2xl border-[3px] border-[#111] bg-[#fffdf2] shadow-[12px_12px_0_#111]">
-              <div className="flex items-center justify-between gap-4 border-b-[3px] border-[#111] bg-[#d7ff31] px-4 py-3">
+            <div className="flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-soft)]">
+              <div className="flex items-center justify-between gap-4 border-b border-[var(--line)] bg-[var(--surface-2)] px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full border-2 border-[#111] bg-[#ff5ca8]" />
-                  <span className="h-3 w-3 rounded-full border-2 border-[#111] bg-[#ffb000]" />
-                  <span className="h-3 w-3 rounded-full border-2 border-[#111] bg-[#7df9ff]" />
+                  <span className="h-3 w-3 rounded-full bg-[var(--secondary)]" />
+                  <span className="h-3 w-3 rounded-full bg-[var(--warning)]" />
+                  <span className="h-3 w-3 rounded-full bg-[var(--primary)]" />
                 </div>
 
-                <p className="truncate text-sm font-black uppercase tracking-[0.14em] text-[#111]">Internal Browser</p>
+                <p className="font-mono-ui truncate text-xs font-bold uppercase tracking-[0.16em] text-[var(--muted)]">Internal Browser</p>
 
                 <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => setMinimized((value) => !value)} className="rounded-full border-2 border-[#111] bg-white p-2 text-[#111] shadow-[3px_3px_0_#111] transition hover:-translate-y-0.5">
+                  <button type="button" onClick={() => setMinimized((value) => !value)} className="btn-secondary min-h-10 px-3 py-2" aria-label="Minimize internal browser">
                     <Minimize2 className="h-4 w-4" />
                   </button>
-                  <button type="button" onClick={() => setOpen(false)} className="rounded-full border-2 border-[#111] bg-[#ff5ca8] p-2 text-[#111] shadow-[3px_3px_0_#111] transition hover:-translate-y-0.5">
+                  <button type="button" onClick={() => setOpen(false)} className="btn-secondary min-h-10 px-3 py-2" aria-label="Close internal browser">
                     <X className="h-4 w-4" />
                   </button>
                 </div>
@@ -59,9 +59,9 @@ export function InternalBrowser({ url, label = 'Open Internal Browser' }: Props)
                   <iframe src={url} className="h-full w-full" title="Internal Browser" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-downloads" />
                 </div>
               ) : (
-                <div className="flex flex-1 items-center justify-between px-4 text-sm font-bold text-[#111]">
-                  <span>Browser minimized · portfolio tetap terbuka</span>
-                  <button type="button" onClick={() => setMinimized(false)} className="rounded-full border-2 border-[#111] bg-[#7df9ff] px-3 py-1.5 text-xs font-black text-[#111] shadow-[3px_3px_0_#111]">
+                <div className="flex flex-1 items-center justify-between gap-3 px-4 text-sm font-bold text-[var(--text)]">
+                  <span className="truncate">Browser minimized · portfolio tetap terbuka</span>
+                  <button type="button" onClick={() => setMinimized(false)} className="btn-primary min-h-10 px-3 py-2 text-xs">
                     Restore
                   </button>
                 </div>

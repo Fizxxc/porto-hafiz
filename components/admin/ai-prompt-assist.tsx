@@ -1,15 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  CheckCircle2,
-  LoaderCircle,
-  Minimize2,
-  Sparkles,
-  WandSparkles,
-  X,
-  XCircle
-} from 'lucide-react';
+import { CheckCircle2, LoaderCircle, Sparkles, WandSparkles, X, XCircle } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 type AiPromptAssistProps = {
@@ -25,7 +17,7 @@ type Phase = 'idle' | 'running' | 'done' | 'error';
 const LOCAL_SUGGESTIONS: Record<string, string[]> = {
   about: [
     'Tulis about premium yang menonjolkan taste visual, karakter desain, dan pendekatan kerja yang rapi.',
-    'Buat about singkat dengan tone modern, elegan, dan cocok untuk portfolio neobrutalism.',
+    'Buat about singkat dengan tone modern, elegan, dan cocok untuk portfolio contemporary.',
     'Tulis about yang menunjukkan Hafiz Al Fariz sebagai siswa DKV dengan arah visual kuat dan eksekusi refined.',
     'Buat paragraf about yang personal, profesional, dan siap tampil di homepage portfolio.'
   ],
@@ -49,7 +41,7 @@ const LOCAL_SUGGESTIONS: Record<string, string[]> = {
   ],
   hero_subtitle: [
     'Tulis subtitle hero yang menjelaskan identitas visual secara singkat dan premium.',
-    'Buat hero subtitle yang lembut, profesional, dan cocok untuk portfolio neobrutalism.',
+    'Buat hero subtitle yang lembut, profesional, dan cocok untuk portfolio contemporary.',
     'Tulis subtitle hero yang menegaskan fokus karya dan arah kreatif Hafiz.',
     'Buat deskripsi hero yang modern, ringan, dan tetap terasa mewah.'
   ],
@@ -71,84 +63,11 @@ function shuffle<T>(items: T[]) {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-function GeneratingOverlay({ label }: { label: string }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="absolute inset-0 z-20 flex items-center justify-center rounded-[2rem] bg-black/75 backdrop-blur-xl"
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 18, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 10, scale: 0.98 }}
-        className="mx-6 w-full max-w-md rounded-[1.8rem] border border-white/10 bg-white/[0.04] p-6 shadow-glass"
-      >
-        <div className="mb-4 flex items-center gap-3">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1.4, ease: 'linear' }}
-            className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/[0.05]"
-          >
-            <LoaderCircle className="h-5 w-5 text-white" />
-          </motion.div>
-          <div>
-            <p className="section-label">KOGRAPH | AI GENERATOR</p>
-            <h4 className="mt-2 text-xl tracking-[-0.04em] text-white">
-              Generating {label}
-            </h4>
-          </div>
-        </div>
-
-        <p className="text-sm leading-7 text-white/[0.58]">
-          AI sedang menyusun hasil terbaik untuk field ini. Tunggu sebentar,
-          hasil akan langsung masuk otomatis saat selesai.
-        </p>
-
-        <div className="mt-6 space-y-3">
-          {[0, 1, 2].map((item) => (
-            <div
-              key={item}
-              className="relative h-2 overflow-hidden rounded-full bg-white/[0.07]"
-            >
-              <motion.div
-                initial={{ x: '-100%' }}
-                animate={{ x: '130%' }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 1.5 + item * 0.25,
-                  ease: 'easeInOut',
-                  delay: item * 0.12
-                }}
-                className="absolute inset-y-0 w-1/2 rounded-full bg-white"
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-5 flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-white/45">
-          <Sparkles className="h-3.5 w-3.5" />
-          crafting premium copy
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-export function AiPromptAssist({
-  kind,
-  label,
-  context,
-  onApply,
-  className
-}: AiPromptAssistProps) {
+export function AiPromptAssist({ kind, label, context, onApply, className }: AiPromptAssistProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [phase, setPhase] = useState<Phase>('idle');
-  const [openDock, setOpenDock] = useState(false);
-  const [minimized, setMinimized] = useState(false);
   const [message, setMessage] = useState(`AI siap membantu untuk ${label}.`);
   const [errorText, setErrorText] = useState('');
   const title = useMemo(() => `Generate ${label}`, [label]);
@@ -156,22 +75,16 @@ export function AiPromptAssist({
   useEffect(() => {
     if (!modalOpen) return;
 
-    const baseSuggestions =
-      LOCAL_SUGGESTIONS[kind] ?? LOCAL_SUGGESTIONS.default;
-
+    const baseSuggestions = LOCAL_SUGGESTIONS[kind] ?? LOCAL_SUGGESTIONS.default;
     const parsed = shuffle(baseSuggestions).slice(0, 4);
     setSuggestions(parsed);
     setErrorText('');
 
-    if (!prompt.trim() && parsed[0]) {
-      setPrompt(parsed[0]);
-    }
+    if (!prompt.trim() && parsed[0]) setPrompt(parsed[0]);
   }, [modalOpen, kind, prompt]);
 
   const generate = async () => {
     try {
-      setOpenDock(true);
-      setMinimized(false);
       setPhase('running');
       setErrorText('');
       setMessage(`Generating ${label.toLowerCase()}...`);
@@ -190,24 +103,15 @@ export function AiPromptAssist({
         data = {};
       }
 
-      if (!response.ok || !data.text) {
-        throw new Error(
-          data.error || `Generate ${label.toLowerCase()} gagal.`
-        );
-      }
+      if (!response.ok || !data.text) throw new Error(data.error || `Generate ${label.toLowerCase()} gagal.`);
 
       onApply(data.text.trim());
       setPhase('done');
       setMessage(`${label} selesai dibuat dan langsung diisikan ke field.`);
 
-      setTimeout(() => {
-        setModalOpen(false);
-      }, 800);
+      setTimeout(() => setModalOpen(false), 800);
     } catch (error) {
-      const nextError =
-        error instanceof Error
-          ? error.message
-          : 'Terjadi kesalahan saat generate.';
+      const nextError = error instanceof Error ? error.message : 'Terjadi kesalahan saat generate.';
       setPhase('error');
       setErrorText(nextError);
       setMessage(nextError);
@@ -216,195 +120,84 @@ export function AiPromptAssist({
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setModalOpen(true)}
-        className={
-          className ??
-          'inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-xs uppercase tracking-[0.22em] text-white/72 transition hover:border-white/25 hover:bg-white/[0.06] hover:text-white'
-        }
-      >
-        <Sparkles className="h-3.5 w-3.5" />
+      <button type="button" onClick={() => setModalOpen(true)} className={className ?? 'btn-secondary min-h-9 px-3 py-2 text-xs'}>
+        <Sparkles className="h-3.5 w-3.5 text-[var(--primary)]" />
         AI
       </button>
 
       <AnimatePresence>
         {modalOpen ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[92] flex items-center justify-center bg-black/70 px-4 backdrop-blur-lg"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[92] flex items-center justify-center bg-black/55 px-4 py-6 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, y: 24, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.98 }}
-              className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-black/[0.95] p-6 shadow-glass"
+              className="admin-card relative max-h-[92vh] w-full max-w-2xl overflow-auto p-5 sm:p-6"
             >
-              <AnimatePresence>
-                {phase === 'running' ? <GeneratingOverlay label={label} /> : null}
-              </AnimatePresence>
+              {phase === 'running' ? (
+                <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[inherit] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] backdrop-blur-xl">
+                  <div className="w-[min(92%,380px)] rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-6 text-center shadow-[var(--shadow-card)]">
+                    <LoaderCircle className="mx-auto h-8 w-8 animate-spin text-[var(--primary)]" />
+                    <p className="section-label mx-auto mt-4">AI Generator</p>
+                    <h4 className="mt-4 text-2xl font-black tracking-[-0.05em] text-[var(--text)]">Generating {label}</h4>
+                    <p className="mt-3 text-sm font-medium leading-7 text-[var(--muted)]">AI sedang menyusun hasil terbaik. Field akan terisi otomatis saat selesai.</p>
+                  </div>
+                </div>
+              ) : null}
 
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
-                  <p className="section-label">KOGRAPH | AI Prompt Builder</p>
-                  <h3 className="mt-2 text-2xl tracking-[-0.05em] text-white">
-                    {title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-7 text-white/[0.56]">
-                    Tulis arahanmu, lalu AI akan generate field secara otomatis.
-                  </p>
+                  <p className="section-label"><WandSparkles className="h-3.5 w-3.5" /> AI Prompt Builder</p>
+                  <h3 className="mt-3 text-2xl font-black tracking-[-0.05em] text-[var(--text)]">{title}</h3>
+                  <p className="mt-2 text-sm font-medium leading-7 text-[var(--muted)]">Tulis arahanmu, lalu AI akan generate field secara otomatis.</p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  disabled={phase === 'running'}
-                  className="rounded-full border border-white/10 p-3 text-white/65 transition hover:border-white/25 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-                >
+                <button type="button" onClick={() => setModalOpen(false)} disabled={phase === 'running'} className="btn-secondary min-h-11 px-3 py-3 disabled:cursor-not-allowed disabled:opacity-40" aria-label="Close AI prompt modal">
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-[1.6rem] border border-white/10 bg-white/[0.03] p-5">
-                  <div className="mb-3 flex items-center gap-2 text-white/78">
-                    <WandSparkles className="h-4 w-4" />
-                    <p className="text-sm">Saran prompt otomatis</p>
+                <div className="form-subpanel">
+                  <div className="mb-3 flex items-center gap-2 text-[var(--text)]">
+                    <WandSparkles className="h-4 w-4 text-[var(--primary)]" />
+                    <p className="text-sm font-semibold">Saran prompt otomatis</p>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
                     {suggestions.map((suggestion) => (
-                      <button
-                        key={suggestion}
-                        type="button"
-                        onClick={() => setPrompt(suggestion)}
-                        disabled={phase === 'running'}
-                        className="rounded-full border border-white/10 px-3 py-2 text-left text-xs text-white/75 transition hover:border-white/25 hover:bg-white/[0.06] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                      >
+                      <button key={suggestion} type="button" onClick={() => setPrompt(suggestion)} disabled={phase === 'running'} className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-left text-xs font-semibold text-[var(--muted)] transition hover:border-[var(--primary)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-50">
                         {suggestion}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <textarea
-                  value={prompt}
-                  onChange={(event) => setPrompt(event.target.value)}
-                  disabled={phase === 'running'}
-                  placeholder={`Contoh: Buat ${label.toLowerCase()} yang lebih premium, singkat, dan menonjolkan visual rhythm.`}
-                  className="input-shell min-h-[180px] disabled:cursor-not-allowed disabled:opacity-70"
-                />
+                <textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} disabled={phase === 'running'} placeholder={`Contoh: Buat ${label.toLowerCase()} yang lebih premium, singkat, dan menonjolkan visual rhythm.`} className="input-shell min-h-[180px] disabled:cursor-not-allowed disabled:opacity-70" />
 
                 {errorText ? (
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/70">
+                  <div className="rounded-2xl border border-[var(--line)] bg-[color-mix(in_srgb,var(--danger)_8%,var(--surface))] px-4 py-3 text-sm font-semibold text-[var(--danger)]">
                     {errorText}
                   </div>
                 ) : null}
 
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={generate}
-                    disabled={phase === 'running' || !prompt.trim()}
-                    className="rounded-full border border-white bg-white px-5 py-3 text-sm font-medium text-black transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <button type="button" onClick={generate} disabled={phase === 'running' || !prompt.trim()} className="btn-primary px-5 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-50">
+                    {phase === 'running' ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                     {phase === 'running' ? `Generating ${label}...` : `Generate ${label}`}
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setModalOpen(false)}
-                    disabled={phase === 'running'}
-                    className="rounded-full border border-white/10 px-5 py-3 text-sm text-white/75 transition hover:border-white/25 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-                  >
+                  <button type="button" onClick={() => setModalOpen(false)} disabled={phase === 'running'} className="btn-secondary px-5 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-40">
                     Tutup
                   </button>
                 </div>
+
+                <div className="status-pill w-full justify-start gap-2">
+                  {phase === 'done' ? <CheckCircle2 className="h-4 w-4 text-[var(--success)]" /> : phase === 'error' ? <XCircle className="h-4 w-4 text-[var(--danger)]" /> : <Sparkles className="h-4 w-4 text-[var(--primary)]" />}
+                  {message}
+                </div>
               </div>
             </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {openDock ? (
-          <motion.div
-            initial={{ opacity: 0, y: 28, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-            className="fixed bottom-24 right-4 z-[88]"
-          >
-            {minimized ? (
-              <button
-                type="button"
-                onClick={() => setMinimized(false)}
-                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-3 text-sm text-white shadow-glass backdrop-blur-xl"
-              >
-                <WandSparkles className="h-4 w-4" />
-                {phase === 'running' ? `Generating ${label}...` : label}
-              </button>
-            ) : (
-              <div className="w-[340px] rounded-[1.5rem] border border-white/10 bg-black/[0.86] p-5 shadow-glass backdrop-blur-2xl">
-                <div className="mb-4 flex items-start justify-between gap-4">
-                  <div>
-                    <p className="section-label">Generation Center</p>
-                    <h3 className="mt-2 text-lg tracking-[-0.04em] text-white">
-                      {label}
-                    </h3>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setMinimized(true)}
-                      className="rounded-full border border-white/10 p-2 text-white/70 transition hover:border-white/20 hover:text-white"
-                    >
-                      <Minimize2 className="h-4 w-4" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setOpenDock(false)}
-                      className="rounded-full border border-white/10 p-2 text-white/70 transition hover:border-white/20 hover:text-white"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                  <div className="flex items-center gap-3">
-                    {phase === 'running' ? (
-                      <LoaderCircle className="h-5 w-5 animate-spin" />
-                    ) : null}
-                    {phase === 'done' ? (
-                      <CheckCircle2 className="h-5 w-5 text-white" />
-                    ) : null}
-                    {phase === 'error' ? (
-                      <XCircle className="h-5 w-5 text-white" />
-                    ) : null}
-                    {phase === 'idle' ? (
-                      <WandSparkles className="h-5 w-5" />
-                    ) : null}
-
-                    <div>
-                      <p className="text-sm text-white/[0.85]">{message}</p>
-                      <p className="mt-1 text-xs leading-5 text-white/[0.45]">
-                        {phase === 'running'
-                          ? 'Sedang menyusun hasil terbaik untukmu.'
-                          : phase === 'done'
-                          ? 'Hasil sudah masuk otomatis ke field yang kamu pilih, kamu bisa close untuk popup ini yakk.'
-                          : phase === 'error'
-                          ? 'Terjadi kesalahan saat generate. Coba lagi nanti.'
-                          : 'Klik tombol AI di field mana saja untuk mulai.'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </motion.div>
         ) : null}
       </AnimatePresence>

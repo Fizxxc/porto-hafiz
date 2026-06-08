@@ -11,7 +11,7 @@ const DEFAULT_MODEL =
 const FALLBACK_SUGGESTIONS: Record<string, string[]> = {
   about: [
     'Tulis about premium yang menonjolkan taste visual, karakter desain, dan pendekatan kerja yang rapi.',
-    'Buat about singkat dengan tone modern, elegan, dan cocok untuk portfolio neobrutalism.',
+    'Buat about singkat dengan tone modern, elegan, dan cocok untuk portfolio contemporary.',
     'Tulis about yang menunjukkan Hafiz Al Fariz sebagai siswa DKV dengan arah visual kuat dan eksekusi refined.',
     'Buat paragraf about yang personal, profesional, dan siap tampil di homepage portfolio.'
   ],
@@ -78,7 +78,7 @@ function buildSystemPrompt(kind: string, mode: 'generate' | 'suggestions') {
 
   return [
     'You are a senior premium portfolio copywriter.',
-    'Write polished, modern, bold, tactile, high-contrast text for a neobrutalist personal portfolio.',
+    'Write polished, modern, bold, tactile, high-contrast text for a contemporary personal portfolio.',
     'Use clean language, strong rhythm, and concise high-end phrasing.',
     'Return only the final text without bullets unless explicitly requested.'
   ].join(' ');
@@ -121,7 +121,7 @@ function fallbackGeneratedText(
       return 'Selected visual works shaped with quiet confidence and modern clarity.';
 
     case 'hero_subtitle':
-      return 'A neobrutalist portfolio crafted to present bold visual thinking, clear UX flow, and a curated creative identity.';
+      return 'A contemporary portfolio crafted to present bold visual thinking, clear UX flow, and a curated creative identity.';
 
     case 'contact_body':
       return 'Open for selected creative collaborations, visual direction, and portfolio-driven design work with a refined and modern approach.';

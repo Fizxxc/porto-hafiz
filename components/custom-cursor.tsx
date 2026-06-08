@@ -1,35 +1,47 @@
 'use client';
 
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 import { useEffect } from 'react';
 
 export function CustomCursor() {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-
-  const ringX = useSpring(cursorX, { damping: 26, stiffness: 320, mass: 0.55 });
-  const ringY = useSpring(cursorY, { damping: 26, stiffness: 320, mass: 0.55 });
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
 
   useEffect(() => {
     const move = (event: MouseEvent) => {
-      cursorX.set(event.clientX);
-      cursorY.set(event.clientY);
+      mouseX.set(event.clientX);
+      mouseY.set(event.clientY);
     };
 
     window.addEventListener('mousemove', move);
     return () => window.removeEventListener('mousemove', move);
-  }, [cursorX, cursorY]);
+  }, [mouseX, mouseY]);
 
   return (
-    <>
-      <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-[100] hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#111] bg-[#ff5ca8] md:block"
-        style={{ x: cursorX, y: cursorY }}
-      />
-      <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-[99] hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#111] bg-[#d7ff31]/30 md:block"
-        style={{ x: ringX, y: ringY }}
-      />
-    </>
+    <motion.div
+      aria-hidden="true"
+      className="pointer-events-none fixed left-0 top-0 z-[100] hidden text-[var(--primary)] md:block"
+      style={{
+        x: mouseX,
+        y: mouseY,
+        marginLeft: -2,
+        marginTop: -2,
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="drop-shadow-[2px_2px_0_var(--text)]"
+      >
+        <path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z" />
+      </svg>
+    </motion.div>
   );
 }

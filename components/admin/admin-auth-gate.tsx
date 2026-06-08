@@ -1,13 +1,14 @@
 'use client';
 
 import { type FormEvent, useMemo, useState } from 'react';
+import { ArrowRight, LoaderCircle, Shield } from 'lucide-react';
 import { createClient } from '@/lib/supabase/browser';
 
 export function AdminAuthGate() {
   const supabase = useMemo(() => createClient(), []);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('kographh@gmail.com');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('Masukkan password admin untuk membuka dashboard.');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: FormEvent) => {
@@ -27,23 +28,31 @@ export function AdminAuthGate() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-md space-y-5 rounded-[2rem] border border-white/10 bg-white/[0.03] p-8">
-      <div className="space-y-2">
-        <p className="section-label">Restricted Route</p>
-        <h2 className="text-3xl tracking-[-0.05em] text-white">Login Admin Access</h2>
-        <p className="text-sm leading-7 text-white/[0.55]">
-          Masukkan email dan password admin untuk mengakses dashboard. Pastikan juga kamu adalah <code>ADMIN</code>.
+    <form onSubmit={handleSubmit} className="admin-card mx-auto w-full max-w-lg space-y-5 p-5 sm:p-7 md:p-8">
+      <div className="space-y-3">
+        <p className="section-label"><Shield className="h-3.5 w-3.5" /> Restricted Route</p>
+        <h2 className="text-3xl font-black leading-tight tracking-[-0.05em] text-[var(--text)] md:text-4xl">Login Admin Control</h2>
+        <p className="text-sm font-medium leading-7 text-[var(--muted)]">
+          Email admin utama: <code className="rounded-lg bg-[var(--surface-2)] px-2 py-1">kographh@gmail.com</code>.
         </p>
       </div>
 
-      <input className="input-shell" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Admin email" type="email" required />
-      <input className="input-shell" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" required />
+      <label className="block space-y-2">
+        <span className="field-label">Email</span>
+        <input className="input-shell" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="kographh@gmail.com" type="email" required />
+      </label>
 
-      <button className="w-full rounded-full border border-white bg-white px-5 py-3 text-sm font-medium text-black transition hover:opacity-85" type="submit" disabled={loading}>
-        {loading ? 'Checking...' : 'Enter Dashboard'}
+      <label className="block space-y-2">
+        <span className="field-label">Password</span>
+        <input className="input-shell" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" required />
+      </label>
+
+      <button className="btn-primary w-full px-5 py-3 text-sm" type="submit" disabled={loading}>
+        {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+        {loading ? 'Checking Access...' : 'Open Dashboard'}
       </button>
 
-      <p className="text-sm text-white/[0.55]">{message}</p>
+      <p className="status-pill w-full justify-center text-center">{message}</p>
     </form>
   );
 }

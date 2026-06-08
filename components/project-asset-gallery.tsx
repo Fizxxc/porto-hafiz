@@ -32,7 +32,7 @@ export function ProjectAssetGallery({ assets, projectSlug }: Props) {
 
   if (!assets.length) {
     return (
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 text-white/55">
+      <div className="rounded-[2rem] border border-white/10 bg-[var(--surface)]/[0.03] p-6 text-white/55">
         Belum ada asset preview yang ditambahkan untuk project ini.
       </div>
     );
@@ -44,7 +44,7 @@ export function ProjectAssetGallery({ assets, projectSlug }: Props) {
         {assets.map((asset, index) => (
           <div
             key={asset.id}
-            className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03]"
+            className="group overflow-hidden rounded-[2rem] border border-white/10 bg-[var(--surface)]/[0.03]"
             onContextMenu={(event) => {
               event.preventDefault();
               void logEvent({
@@ -97,7 +97,7 @@ export function ProjectAssetGallery({ assets, projectSlug }: Props) {
                       target: asset.label || asset.file_url
                     });
                   }}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-3 text-sm text-white/80 transition hover:border-white/25 hover:bg-white/[0.05] hover:text-white"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-3 text-sm text-white/80 transition hover:border-white/25 hover:bg-[var(--surface)]/[0.05] hover:text-white"
                 >
                   <Eye className="h-4 w-4" />
                   Preview
@@ -114,7 +114,7 @@ export function ProjectAssetGallery({ assets, projectSlug }: Props) {
                       target: asset.label || asset.file_url
                     })
                   }
-                  className="inline-flex items-center gap-2 rounded-full border border-white bg-white px-4 py-3 text-sm font-medium text-black transition hover:opacity-85"
+                  className="inline-flex items-center gap-2 rounded-full border border-white bg-[var(--surface)] px-4 py-3 text-sm font-medium text-black transition hover:opacity-85"
                 >
                   <Download className="h-4 w-4" />
                   Download

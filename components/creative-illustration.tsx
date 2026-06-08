@@ -16,7 +16,7 @@ export function CreativeIllustration() {
           <ul className="list-disc space-y-1 pl-5">
             <li>Ganti fill utama SVG ke <code>#ffffff</code> dan aksen ke <code>#000000</code>.</li>
             <li>Atau pakai class <code>.illustration-bw</code> dengan CSS filter untuk desaturate penuh.</li>
-            <li>Untuk SVG React component, expose props lalu map warna ke token neobrutalism.</li>
+            <li>Untuk SVG React component, expose props lalu map warna ke token contemporary.</li>
           </ul>
         </div>
       </div>
